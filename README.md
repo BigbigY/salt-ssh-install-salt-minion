@@ -29,7 +29,7 @@ yum -y install salt-ssh
 
 # 二、配置minion信息 #
 
-**1、默认/etc/salt/roster **
+**1、默认/etc/salt/roster:**
 
 ```
 [root@localhost ~]# cat /etc/salt/roster
