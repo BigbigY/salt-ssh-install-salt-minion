@@ -3,27 +3,33 @@
 # 一、安装salt-ssh #
 
 1、导入SaltStack存储库密钥：
+```
 rpm --import https://repo.saltstack.com/yum/redhat/7/x86_64/latest/SALTSTACK-GPG-KEY.pub
+```
 
- 2、将以下内容保存至/etc/yum.repos.d/saltstack.repo
+2、将以下内容保存至/etc/yum.repos.d/saltstack.repo
+
+```
 [saltstack-repo]
 name=SaltStack repo for RHEL/CentOS $releasever
 baseurl=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest
 enabled=1
 gpgcheck=1
 gpgkey=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTSTACK-GPG-KEY.pub
+```
 
 3、 Run sudo yum clean expire-cache.
  
 4、Run sudo yum update.
 
 5、安装salt-ssh
+```
 yum -y install salt-ssh
-
+```
 
 # 二、配置minion信息 #
 
-1、默认/etc/salt/roster 
+**1、默认/etc/salt/roster **
 
 ```
 [root@localhost ~]# cat /etc/salt/roster
@@ -37,7 +43,7 @@ yum -y install salt-ssh
 #  host: 192.168.42.2
 ```
 
-ip文件：
+**ip文件：**
 
 ```
 [root@localhost ~]# cat host_ip.txt 
@@ -47,7 +53,7 @@ ip文件：
 192.168.1.17
 ```
 
-批量添加脚本：
+**批量添加脚本：**
 
 ```
 [root@bogon ~]# cat ip.sh
@@ -66,7 +72,7 @@ done
 ```
 
 
-执行
+**执行**
 
 ```
 [root@bogon ~]# cat /etc/salt/roster
@@ -95,7 +101,7 @@ done
 ```
 
 
-测试（出现）：
+**测试（出现）：**
 -i：指定 -i 参数是为了SSH第一次连接, 能够自动将目标SSH Server的DSA Key记入~/.ssh/known_hosts而不进行提示
 -r：
 
@@ -114,7 +120,7 @@ done
 
 # 三、安装minion #
 
-目录结构：
+**目录结构：**
 
 ```
 [root@bogon salt]# tree minions/
@@ -130,7 +136,7 @@ minions/
 /srv/salt
 ```
 
-根据客户端系统版本
+**根据客户端系统版本**
 ```
 mkdir -p /srv/salt/minions/
 [root@localhost]# pwd
@@ -141,7 +147,7 @@ mkdir -p /srv/salt/minions/
 -rw-r--r-- 1 root root  257 3月   7 21:03 saltstack.repo
 ```
 
-sls文件：
+**sls文件：**
 
 ```
 [root@bogon minions]# cat install.sls
@@ -190,18 +196,19 @@ minion_service:
       - file: minion_conf
 ```
 
-执行：
+**执行：**
 
 ```
 salt-ssh -i '10.1.250.30' state.sls minions.install
 ```
 
-在master装salt-master
+**在master装salt-master**
+
 ```
 yum -y install salt-master 
 ```
 
-查看需要授权的主机
+**查看需要授权的主机**
 
 ```
 [root@bogon minions]# salt-key
@@ -213,7 +220,8 @@ Unaccepted Keys:
 Rejected Keys:
 ```
 
-授权要管理的主机：
+**授权要管理的主机：**
+
 ```
 [root@bogon minions]# salt-key -A
 The following keys are going to be accepted:
