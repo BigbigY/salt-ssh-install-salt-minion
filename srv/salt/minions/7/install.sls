@@ -1,7 +1,7 @@
 minion_key:
   file.managed:
     - name: /tmp/SALTSTACK-GPG-KEY.pub
-    - source: salt://minions/conf/SALTSTACK-GPG-KEY.pub
+    - source: salt://minions/7/conf/SALTSTACK-GPG-KEY.pub
     - user: root
     - group: root
     - mode: 644
@@ -10,7 +10,7 @@ minion_key:
 minion_yum:
   file.managed:
     - name: /etc/yum.repos.d/saltstack.repo
-    - source: salt://minions/conf/saltstack.repo
+    - source: salt://minions/7/conf/saltstack.repo
     - user: root
     - group: root
     - mode: 644
@@ -26,7 +26,7 @@ minion_install:
 minion_conf:
   file.managed:
     - name: /etc/salt/minion
-    - source: salt://minions/conf/minion
+    - source: salt://minions/7/conf/minion
     - user: root
     - group: root
     - mode: 640
