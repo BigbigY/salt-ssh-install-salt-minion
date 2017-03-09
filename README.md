@@ -4,7 +4,7 @@ salt-ssh是Saltstack的另一种管理方式，无需安装minion端，可以运
 
 ## 环境： ##
 ```
-192.168.1.14  服务端:salt-ssh salt-master salt-minion
+192.168.1.14  服务端：salt-ssh salt-master salt-minion
 192.168.1.15  客户端：salt-minion
 192.168.1.16  客户端：salt-minion
 192.168.1.17  客户端：salt-minion
