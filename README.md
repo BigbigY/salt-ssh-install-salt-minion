@@ -29,9 +29,9 @@ $ rpm --import SALTSTACK-GPG-KEY.pub
 ### 5、Run sudo yum update. ###
 
 ### 6、安装salt-ssh ###
+提示：salt-ssh不需要启动服务,只需要启动下salt-master服务
 ```
 $ yum -y install salt-ssh salt-master
-#提示：salt-ssh不需要启动服务,只需要启动下salt-master服务
 $ systemctl start salt-master
 ```
 
