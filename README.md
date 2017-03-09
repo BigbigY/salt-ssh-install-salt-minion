@@ -90,7 +90,7 @@ $ cat /etc/salt/roster
 
 ### 4、测试 ###
 ```
-$ salt-ssh '*' test.ping
+$ salt-ssh -i '*' test.ping
 192.168.1.17:
     True
 192.168.1.14:
@@ -123,12 +123,24 @@ minions/
 4 directories, 6 files
 ```
 
-### 2、执行： ###
+### 2、需要在控制端/etc/hosts文件增加Host解析（master） ###
 ```
+$ cat /etc/hosts
+192.168.1.14  salt.node1.com
+192.168.1.15  salt.node2.com
+192.168.1.16  salt.node3.com
+192.168.1.17  salt.node4.com
+```
+
+
+### 3、执行： ###
+```
+$ pwd
+/srv/salt
 salt-ssh -i '*' state.sls minions.7.install
 ```
 
-### 3、查看需要授权的主机： ###
+### 4、查看需要授权的主机： ###
 ```
 $ salt-key
 Accepted Keys:
@@ -141,7 +153,7 @@ Unaccepted Keys:
 Rejected Keys:
 ```
 
-### 4、授权要管理的主机： ###
+### 5、授权要管理的主机： ###
 ```
 $ salt-key -A
 The following keys are going to be accepted:
@@ -170,7 +182,7 @@ Unaccepted Keys:
 Rejected Keys:
 ```
 
-### 5、salt测试 ###
+### 6、salt测试 ###
 ```
 $ salt '*' test.ping
 192.168.1.14:
@@ -183,10 +195,10 @@ $ salt '*' test.ping
     True
 ```
 
-### 6、取消salt-ssh： ###
+### 7、取消salt-ssh： ###
 在/etc/salt/roster清楚添加的认证主机
 
-### 7、测试 ###
+### 8、测试 ###
 ```
 $ salt '*' test.ping
 192.168.1.14:
