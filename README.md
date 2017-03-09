@@ -159,7 +159,7 @@ Key for minion 192.168.1.17 accepted.
 
 ### 查看 ###
 ```
-[root@bogon minions]# salt-key
+$ salt-key
 Accepted Keys:
 192.168.1.14
 192.168.1.15
