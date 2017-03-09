@@ -1,3 +1,5 @@
+# 批量部署salt-minion客户端 #
+
 大规模部署salt的时候，为了减轻运维工作，需要批量来安装salt-minion客户端。
 
 salt-ssh是Saltstack的另一种管理方式，无需安装minion端，可以运用Salt的一切功能，管理和使用方式和基本和Salt一样。但是执行效率会比有minion端慢很多，不适合大规模批量操作
