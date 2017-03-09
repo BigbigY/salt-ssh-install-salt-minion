@@ -29,7 +29,7 @@ minion_conf:
     - source: salt://minions/7/conf/minion
     - user: root
     - group: root
-    - mode: 640
+    - mode: 644
     - template: jinja
     - defaults:
       minion_id: {{ grains['fqdn_ip4'][0] }}
