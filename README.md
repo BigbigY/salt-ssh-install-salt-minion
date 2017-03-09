@@ -14,12 +14,12 @@ salt-ssh是Saltstack的另一种管理方式，无需安装minion端，可以运
 
 ### 1、克隆代码： ###
 ```
-git clone https://github.com/BigbigY/salt-ssh-install-salt-minion.git
+$ git clone https://github.com/BigbigY/salt-ssh-install-salt-minion.git
 ```
 
 ### 2、导入SaltStack存储密钥： ###
 ```
-rpm --import SALTSTACK-GPG-KEY.pub
+$ rpm --import SALTSTACK-GPG-KEY.pub
 ```
 
 ### 3、将saltstack.repo拷贝到/etc/yum.repos.d/ ###
@@ -30,7 +30,9 @@ rpm --import SALTSTACK-GPG-KEY.pub
 
 ### 6、安装salt-ssh ###
 ```
-yum -y install salt-ssh salt-master
+$ yum -y install salt-ssh salt-master
+#提示：salt-ssh不需要启动服务,只需要启动下salt-master服务
+$ systemctl start salt-master
 ```
 
 
