@@ -1,62 +1,43 @@
-大规模部署salt的时候，为了减轻运维工作，需要批量来安装salt-minion客户端。
+# 一、salt-ssh安装（master端） #
 
-# 一、安装salt-ssh #
-
-1、导入SaltStack存储库密钥：
+### 1、克隆代码： ###
 ```
-rpm --import https://repo.saltstack.com/yum/redhat/7/x86_64/latest/SALTSTACK-GPG-KEY.pub
+git clone https://github.com/BigbigY/salt-ssh-install-salt-minion.git
 ```
 
-2、将以下内容保存至/etc/yum.repos.d/saltstack.repo
-
+### 2、导入SaltStack存储密钥： ###
 ```
-[saltstack-repo]
-name=SaltStack repo for RHEL/CentOS $releasever
-baseurl=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest
-enabled=1
-gpgcheck=1
-gpgkey=https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTSTACK-GPG-KEY.pub
+rpm --import SALTSTACK-GPG-KEY.pub
 ```
 
-3、 Run sudo yum clean expire-cache.
- 
-4、Run sudo yum update.
+### 3、将saltstack.repo拷贝到/etc/yum.repos.d/ ###
 
-5、安装salt-ssh
+### 4、Run sudo yum clean expire-cache. ###
+
+### 5、Run sudo yum update. ###
+
+### 6、安装salt-ssh ###
 ```
-yum -y install salt-ssh
-```
-
-# 二、配置minion信息 #
-
-**1、默认/etc/salt/roster:**
-
-```
-[root@localhost ~]# cat /etc/salt/roster
-# Sample salt-ssh config file
-#web1:
-#  host: 192.168.42.1 # The IP addr or DNS hostname
-#  user: fred         # Remote executions will be executed as user fred
-#  passwd: foobarbaz  # The password to use for login, if omitted, keys are used
-#  sudo: True         # Whether to sudo to root, not enabled by default
-#web2:
-#  host: 192.168.42.2
+yum -y install salt-ssh salt-master
 ```
 
-**ip文件：**
 
+# 二、配置salt-ssh客户端信息，通信 #
+
+### 1、ip文件： ###
+把所有minion_ip放到文件中，格式如下：
 ```
-[root@localhost ~]# cat host_ip.txt 
+$ cat host_ip.txt 
 192.168.1.14
 192.168.1.15
 192.168.1.16
 192.168.1.17
 ```
 
-**批量添加脚本：**
-
+### 2、批量添加脚本： ###
+USERNAME是客户端用户名，PASSWORD是客户端密码，这里的话客户端账号密码都相同，所有我写了个批量添加的脚本
 ```
-[root@bogon ~]# cat ip.sh
+$ cat ip.sh
 #!/bin/bash
 USERNAME="root"
 PASSWORD="123"
@@ -71,11 +52,9 @@ do
 done
 ```
 
-
-**执行**
-
+### 3、执行，查看 ###
 ```
-[root@bogon ~]# cat /etc/salt/roster
+$ cat /etc/salt/roster
 # Sample salt-ssh config file
 #web1:
 #  host: 192.168.42.1 # The IP addr or DNS hostname
@@ -83,30 +62,31 @@ done
 #  sudo: True         # Whether to sudo to root, not enabled by default
 #web2:
 #  host: 192.168.42.2
-10.1.250.95:
-  host: 10.1.250.95
+192.168.1.14:
+  host: 192.168.1.14
   user: root
   passwd: 123
   timeout: 10
-10.1.250.30:
-  host: 10.1.250.30
+192.168.1.15:
+  host: 192.168.1.15
   user: root
   passwd: 123
   timeout: 10
-10.1.250.134:
-  host: 10.1.250.134
+192.168.1.16:
+  host: 192.168.1.16
+  user: root
+  passwd: 123
+  timeout: 10
+192.168.1.17:
+  host: 192.168.1.17
   user: root
   passwd: 123
   timeout: 10
 ```
 
-
-**测试（出现）：**
--i：指定 -i 参数是为了SSH第一次连接, 能够自动将目标SSH Server的DSA Key记入~/.ssh/known_hosts而不进行提示
--r：
-
+### 4、测试 ###
 ```
-[root@localhost ~]# salt-ssh '*' test.ping
+$ salt-ssh '*' test.ping
 192.168.1.17:
     True
 192.168.1.14:
@@ -117,139 +97,100 @@ done
     True
 ```
 
+# 三、批量安装salt-minion #
 
-# 三、安装minion #
-
-**目录结构：**
-
+### 1、目录结构： ###
 ```
-[root@bogon salt]# tree minions/
-minions/
-├── conf
-│   ├── minion
-│   ├── SALTSTACK-GPG-KEY.pub
-│   └── saltstack.repo
-└── install.sls
- 
-1 directory, 4 files
-[root@bogon salt]# pwd
+$ pwd
 /srv/salt
+$ tree minions/
+minions/
+├── 5
+│   └── README.md
+├── 6
+│   └── README.md
+└── 7
+    ├── conf
+    │   ├── minion
+    │   ├── SALTSTACK-GPG-KEY.pub
+    │   └── saltstack.repo
+    └── install.sls
+
+4 directories, 6 files
 ```
 
-**根据客户端系统版本**
+### 2、执行： ###
 ```
-mkdir -p /srv/salt/minions/
-[root@localhost]# pwd
-/srv/salt/minions/
-[root@localhost ]# ll
-总用量 8
--rw-r--r-- 1 root root 1727 3月   1 08:40 SALTSTACK-GPG-KEY.pub
--rw-r--r-- 1 root root  257 3月   7 21:03 saltstack.repo
+salt-ssh -i '*' state.sls minions.7.install
 ```
 
-**sls文件：**
-
+### 3、查看需要授权的主机： ###
 ```
-[root@bogon minions]# cat install.sls
-minion_key:
-  file.managed:
-    - name: /tmp/SALTSTACK-GPG-KEY.pub
-    - source: salt://minions/conf/SALTSTACK-GPG-KEY.pub
-    - user: root
-    - group: root
-    - mode: 644
-  cmd.run:
-    - name: rpm --import /tmp/SALTSTACK-GPG-KEY.pub
-minion_yum:
-  file.managed:
-    - name: /etc/yum.repos.d/saltstack.repo
-    - source: salt://minions/conf/saltstack.repo
-    - user: root
-    - group: root
-    - mode: 644
-  cmd.run:
-    - name: yum clean expire-cache && yum -y update
-minion_install:
-  pkg.installed:
-    - pkgs:
-      - salt-minion
-    - require:
-      - file: minion_yum
-    - unless: rpm -qa | grep salt-minion
-minion_conf:
-  file.managed:
-    - name: /etc/salt/minion
-    - source: salt://minions/conf/minion
-    - user: root
-    - group: root
-    - mode: 640
-    - template: jinja
-    - defaults:
-      minion_id: {{ grains['fqdn_ip4'][0] }}
-    - require:
-      - pkg: minion_install
-minion_service:
-  service.running:
-    - name: salt-minion
-    - enable: True
-    - require:
-      - file: minion_conf
-```
-
-**执行：**
-
-```
-salt-ssh -i '10.1.250.30' state.sls minions.install
-```
-
-**在master装salt-master**
-
-```
-yum -y install salt-master 
-```
-
-**查看需要授权的主机**
-
-```
-[root@bogon minions]# salt-key
+$ salt-key
 Accepted Keys:
 Denied Keys:
 Unaccepted Keys:
-10.1.250.134
-10.1.250.30
+192.168.1.14
+192.168.1.15
+192.168.1.16
+192.168.1.17
 Rejected Keys:
 ```
 
-**授权要管理的主机：**
-
+### 4、授权要管理的主机： ###
 ```
-[root@bogon minions]# salt-key -A
+$ salt-key -A
 The following keys are going to be accepted:
 Unaccepted Keys:
-10.1.250.134
-10.1.250.30
+192.168.1.14
+192.168.1.15
+192.168.1.16
+192.168.1.17
 Proceed? [n/Y] y
-Key for minion 10.1.250.134 accepted.
-Key for minion 10.1.250.30 accepted.
+Key for minion 192.168.1.14 accepted.
+Key for minion 192.168.1.15 accepted.
+Key for minion 192.168.1.16 accepted.
+Key for minion 192.168.1.17 accepted.
+```
+
+### 查看 ###
+```
 [root@bogon minions]# salt-key
 Accepted Keys:
-10.1.250.134
-10.1.250.30
+192.168.1.14
+192.168.1.15
+192.168.1.16
+192.168.1.17
 Denied Keys:
 Unaccepted Keys:
 Rejected Keys:
-[root@bogon minions]# salt '*' test.ping
-10.1.250.30:
-    True
-10.1.250.134:
-    True
+```
 
-取消salt-ssh:/etc/salt/roster
-
-测试：
-[root@bogon minions]# salt '*' test.ping
-10.1.250.134:
+### 5、salt测试 ###
+```
+$ salt '*' test.ping
+192.168.1.14:
     True
-10.1.250.30:
+192.168.1.15:
+    True
+192.168.1.16:
+    True
+192.168.1.17:
+    True
+```
+
+### 6、取消salt-ssh： ###
+在/etc/salt/roster清楚添加的认证主机
+
+### 7、测试 ###
+```
+$ salt '*' test.ping
+192.168.1.14:
+    True
+192.168.1.15:
+    True
+192.168.1.16:
+    True
+192.168.1.17:
     True
 ```
