@@ -213,7 +213,7 @@ $ salt '*' test.ping
 ```
 
 ### 7、取消salt-ssh： ###
-在/etc/salt/roster清楚添加的认证主机
+在/etc/salt/roster清除添加的认证主机
 
 ### 8、测试 ###
 ```
