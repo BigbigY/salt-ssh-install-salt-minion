@@ -227,3 +227,8 @@ $ salt '*' test.ping
 192.168.1.17:
     True
 ```
+
+
+温馨提示：
+此篇以ip为minion_id，如果需要根据主机名，可以写把主机名写命名好，然后改写install.sls grains获取改成host主机名就可以了。
+或者可以自己编写个grains模块来获取。
