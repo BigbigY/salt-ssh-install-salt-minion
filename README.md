@@ -151,6 +151,8 @@ $ cat /etc/hosts
 
 
 ### 3、执行： ###
+minion配置文件根据自己master_ip修改，id根据自身情况获取
+
 ```
 $ pwd
 /srv/salt
